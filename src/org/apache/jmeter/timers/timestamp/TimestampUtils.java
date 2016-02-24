@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Utility class for reading timestamp files
@@ -31,38 +30,40 @@ public class TimestampUtils implements Serializable{
 	private static final int SECONDS_TO_MILLISECONDS = 1000;
 
 	/**
+	 * modified my me [24/02/2015]
+	 */
+	/**
 	 * Read a timestamp file and adds the timestamps into a list
 	 * @param file location of timestamp file
 	 * @param cvsSplitBy symbol which ends each line (e.g. semicolon)
-	 * @param timestamps list where timestamps (long values which specify timestamp in milliseconds) will be added.
+	 * @param timestamps array where timestamps (long values which specify timestamp in milliseconds) will be added.
 	 * @return true if and only if it was possible to open and parse the timestamp file
 	 */
-	public static boolean readTimestampFile(String file,
-			String cvsSplitBy, List<Long> timestamps) {
+	public static boolean readTimestampFile(String file, String cvsSplitBy, long[] timestamps) {
 		boolean result = false;
 		
 		BufferedReader br = null;
 		String line = "";
 		try {
 			br = new BufferedReader(new FileReader(file));
-			while ((line = br.readLine()) != null) {
+			int i = 0;
+			while ( (line = br.readLine()) != null ) {
 				String[] timestampString = line.split(cvsSplitBy);
-				long timestamp		= (long) (SECONDS_TO_MILLISECONDS * Double.parseDouble(timestampString[0]));
-				timestamps.add(timestamp);
+				long timestamp = (long) (SECONDS_TO_MILLISECONDS * Double.parseDouble(timestampString[0]));
+				timestamps[i] = timestamp;
+				i++;
 			}
 			result = true;
-		} catch (FileNotFoundException e) {
-			// return quietly
-		} catch (IOException e) {
+		} 
+		catch (FileNotFoundException e) { /* return quietly */ } 
+		catch (IOException e) {
 			System.out.println("Error reading file: " + file);
 			e.printStackTrace();
-		} finally {
+		} 
+		finally {
 			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				try { br.close(); } 
+				catch (IOException e) { e.printStackTrace(); }
 			}
 		}
 		return result;

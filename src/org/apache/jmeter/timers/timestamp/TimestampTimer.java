@@ -1,6 +1,8 @@
 package org.apache.jmeter.timers.timestamp;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -11,6 +13,7 @@ import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jmeter.threads.JMeterContext;
 import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.jmeter.timers.Timer;
+import org.apache.jmeter.timers.timestamp.TimestampUtils;
 
 /**
  * This class implements a Timestamp Timer. It can be used to delay
@@ -93,8 +96,7 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 		long delay = 0;
 		Timestamp currentTimestamp = null;
 		try {
-			currentTimestamp = timestampList.poll(10,
-					TimeUnit.MILLISECONDS);
+			currentTimestamp = timestampList.poll(10, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {}
 		
 		JMeterContext context = getThreadContext();
@@ -125,22 +127,30 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 		super();
 	}
 
-
+ 
+	/**
+	 * modified my me [24/02/2015]
+	 */
 	private void readTimestampFile() {
-		LinkedList<Long> timestamps = new LinkedList<Long>();
+			
+		long len = 0;
+		try {
+			len = Files.lines(Paths.get(timestampFile)).count();
+		} catch (IOException e) {
+			System.out.println("Error reading file: " + timestampFile);
+		}		
 
+		long[] timestamps = new long[(int) len];
+		
 		boolean timestampsAvailable = TimestampUtils.readTimestampFile(timestampFile, ";", timestamps);
-		if (timestampsAvailable)
-		{
+		if (timestampsAvailable){
 			timestampList.clear();
 			lastTimestamp = 0;
-			int numberOfTimestamps = timestamps.size();
+			int numberOfTimestamps = timestamps.length;
 			long count = 0; 
-			if (numberOfTimestamps > 0)
-			{
-				lastTimestamp = timestamps.get(numberOfTimestamps-1);
-				for (long time : timestamps)
-				{
+			if (numberOfTimestamps > 0){
+				lastTimestamp = timestamps[numberOfTimestamps-1];
+				for (long time : timestamps){
 					count++;
 					timestampList.add(new Timestamp(count, time));
 				}
@@ -161,8 +171,7 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 	}
 
 	public void setFilename(String filename) {
-		if (filename != this.timestampFile && !started)
-		{
+		if (filename != this.timestampFile && !started)	{
 			this.timestampFile = filename;
 			readTimestampFile();
 		}
@@ -175,8 +184,7 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 		JMeterContext context = getThreadContext();
 		JMeterVariables vars = context.getVariables();
 		String startTimeString = vars.get("TIMESTAMPTIMER_START");
-		if (startTimeString != null)
-		{
+		if (startTimeString != null){
 			startTime = Long.parseLong(startTimeString);
 		} else {
 			startTime = System.currentTimeMillis();

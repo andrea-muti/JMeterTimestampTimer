@@ -20,8 +20,7 @@ public class TimestampTimerBeanInfo extends BeanInfoSupport {
         p.setValue(NOT_UNDEFINED, Boolean.TRUE); // must be defined
         p.setValue(DEFAULT, "");
         p.setPropertyEditorClass(FileEditor.class);
-        
-        
+
 	}
 
 }
