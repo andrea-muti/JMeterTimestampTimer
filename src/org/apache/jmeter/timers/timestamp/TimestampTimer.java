@@ -1,6 +1,7 @@
 package org.apache.jmeter.timers.timestamp;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
@@ -132,17 +133,22 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 	 * modified my me [24/02/2015]
 	 */
 	private void readTimestampFile() {
-			
 		long len = 0;
 		try {
-			len = Files.lines(Paths.get(timestampFile)).count();
-		} catch (IOException e) {
+			BufferedReader br = new BufferedReader(new FileReader(timestampFile));
+			
+			while (( br.readLine()) != null) {	len++; }
+			br.close();
+
+		} catch (Exception e) {
 			System.out.println("Error reading file: " + timestampFile);
 		}		
-
+		System.out.println(" - number of timestampFile : "+len);
+		
 		long[] timestamps = new long[(int) len];
 		
 		boolean timestampsAvailable = TimestampUtils.readTimestampFile(timestampFile, ";", timestamps);
+		
 		if (timestampsAvailable){
 			timestampList.clear();
 			lastTimestamp = 0;
@@ -173,6 +179,7 @@ public class TimestampTimer extends AbstractTestElement implements Timer, TestSt
 	public void setFilename(String filename) {
 		if (filename != this.timestampFile && !started)	{
 			this.timestampFile = filename;
+			System.out.println(" - timestampFile : "+this.timestampFile);
 			readTimestampFile();
 		}
 	}

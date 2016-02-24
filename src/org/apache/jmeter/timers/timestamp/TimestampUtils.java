@@ -45,17 +45,22 @@ public class TimestampUtils implements Serializable{
 		BufferedReader br = null;
 		String line = "";
 		try {
+			System.out.println(" - start populating the timestamps array");
 			br = new BufferedReader(new FileReader(file));
 			int i = 0;
 			while ( (line = br.readLine()) != null ) {
-				String[] timestampString = line.split(cvsSplitBy);
-				long timestamp = (long) (SECONDS_TO_MILLISECONDS * Double.parseDouble(timestampString[0]));
-				timestamps[i] = timestamp;
-				i++;
+				if(i<(timestamps.length-1)){
+					String[] timestampString = line.split(cvsSplitBy);
+					long timestamp = (long) (SECONDS_TO_MILLISECONDS * Double.parseDouble(timestampString[0]));
+					timestamps[i] = timestamp;
+					i++;
+				}
+				else{break;}
 			}
 			result = true;
+			System.out.println(" - timestamp array successfully populated");
 		} 
-		catch (FileNotFoundException e) { /* return quietly */ } 
+		catch (FileNotFoundException e) { System.err.println(" - error: file not found"); /* return quietly */ } 
 		catch (IOException e) {
 			System.out.println("Error reading file: " + file);
 			e.printStackTrace();
