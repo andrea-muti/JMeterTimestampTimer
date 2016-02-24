@@ -3,6 +3,8 @@ Timestamp Timer PlugIn
 
 JMeter plugin for timestamp based delays (new timer component).
 
+[ TRY TO CHANGE THE IMPLEMENTATION OF THE READING FROM FILE AND MAINTAINING THE DATA IN AN ARRAY AND NOT IN A LINKEDLIST IN ORDER TO SPEED-UP THE LOADING OF THE FILE AND AT THE SAME TIME REDUCE THE MEMORY USAGE (TO AVOID OutOfMemoryException) ]
+
 
 ------------------------
 Installation
