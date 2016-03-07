@@ -2,8 +2,6 @@ package org.apache.jmeter.timers.timestamp;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +12,6 @@ import org.apache.jmeter.testelement.TestStateListener;
 import org.apache.jmeter.threads.JMeterContext;
 import org.apache.jmeter.threads.JMeterVariables;
 import org.apache.jmeter.timers.Timer;
-import org.apache.jmeter.timers.timestamp.TimestampUtils;
 
 /**
  * This class implements a Timestamp Timer. It can be used to delay
